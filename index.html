@@ -148,6 +148,9 @@ const ORD={patrons:0,artisans:1,sages:2,landowners:3,riders:4,hunters:5,traders:
 const CAPORD={sages:0,artisans:1,landowners:2,riders:3,patrons:4,traders:5,hunters:6,clerics:7,statesmen:8,champions:9};
 // horse/elephant-UU nations (not Yuezhi) → Riders is the only mil seat
 const HORSE_UU=new Set(['Egypt','Hittite','Persia','Carthage','Maurya','Tamil']);
+// Statesmen is normally never a capital, but Persia's Orders economy can give up the
+// double-decree — a viable cap when the start lacks camp/grove sites for Hunters/Clerics.
+const STATESMEN_CAP=new Set(['Persia']);
 function genCombos(nat){
   const fams=nat.fams.map(f=>f[0]);
   const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
@@ -157,7 +160,7 @@ function genCombos(nat){
   const spamOpts=spammers.includes('statesmen') ? spammers.filter(s=>s!=='sages'&&s!=='clerics') : spammers;
   const horseUU=HORSE_UU.has(nat.n) && fams.includes('riders');  // horse/elephant UU: Riders is the mil seat
   // Riders/Hunters need a 2nd military family (for the mil seat). Champions/Statesmen never cap.
-  const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
+  const capBase=k=> k!=='champions' && (k!=='statesmen' || STATESMEN_CAP.has(nat.n)) && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
   const hasSages=fams.includes('sages');
   const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
   // Riders/Clerics never capped over Sages/Patrons (Hunters/Traders are resource caps —
