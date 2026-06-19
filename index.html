@@ -30,8 +30,15 @@
   .legend .kp{width:13px;height:13px;border-radius:3px;background:#4a5568;position:relative}
   .legend .kp.cap{box-shadow:inset 0 0 0 1.5px var(--gold)} .legend .kp.cap::after{content:"♛";position:absolute;inset:0;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff}
 
-  /* sticky jump nav */
-  .nav{position:sticky; top:0; z-index:5; margin:0 -20px 20px; padding:10px 20px; background:rgba(14,15,18,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:6px}
+  /* sticky top bar: family filter + nation jump */
+  .topbar{position:sticky; top:0; z-index:5; margin:0 -20px 20px; padding:10px 20px; background:rgba(14,15,18,.96); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  .famfilter{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:9px}
+  .famfilter .fflabel{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); margin-right:2px}
+  .ff{display:inline-flex; align-items:center; gap:5px; padding:4px 10px 4px 7px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:12px; cursor:pointer; user-select:none}
+  .ff img{width:15px; height:15px; object-fit:contain}
+  .ff:hover{border-color:var(--gold-dim)}
+  .ff.on{border-color:var(--gold); background:#23211a}
+  .nav{display:flex; flex-wrap:wrap; gap:6px}
   .nav a{display:inline-flex; align-items:center; gap:6px; padding:4px 10px 4px 6px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:12.5px; text-decoration:none}
   .nav a:hover{border-color:var(--gold)}
   .nav a img{width:16px;height:16px;object-fit:contain}
@@ -98,7 +105,10 @@
     <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and a family worth <b>having the most cities</b> with. These are mostly my own biases — I like a science cap and a military seat, and I'll spam the families I think are worth it (keeping the rest within ~3 cities, e.g. 1 Artisan to 4 Statesmen). You'll break all of this constantly; they're not rules, just gentle guidelines — hopefully a handy way to think through your city / family / nation setups.</p>
   </header>
 
-  <nav class="nav" id="nav"></nav>
+  <div class="topbar">
+    <div class="famfilter" id="famfilter"></div>
+    <nav class="nav" id="nav"></nav>
+  </div>
   <main id="main"></main>
   <div class="foot">family.xml · familyClass.xml · effectPlayer.xml — projected from the Old World install. Local reference.</div>
 </div>
@@ -229,8 +239,11 @@ const UU_SWAP={
   Maurya:{res:['elephant','Elephant'], alts:['Champions','Hunters']},
 };
 
-function card(nat){
-  const body=`<div class="setups">${genCombos(nat).map(l=>setupCol(nat,l)).join('')}</div>`;
+function card(nat, fam){
+  let combos=genCombos(nat);
+  if(fam) combos=combos.filter(c=> c[0]===fam || c[1]===fam || c[2]===fam);
+  if(!combos.length) return '';
+  const body=`<div class="setups">${combos.map(l=>setupCol(nat,l)).join('')}</div>`;
   const sw=UU_SWAP[nat.n];
   const swap=sw?`<div class="swapnote">swap the <b>Riders</b> mil seat for ${sw.alts.join(' / ')} if you found it on <img src="img/resources/${sw.res[0]}.png" title="${sw.res[1]}" alt="${sw.res[1]}"> ${sw.res[1]}</div>`:'';
   return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
@@ -239,8 +252,22 @@ function card(nat){
     ${body}${swap}</article>`;
 }
 
-document.getElementById('main').innerHTML=NAT.map(card).join('');
-document.getElementById('nav').innerHTML=NAT.map(n=>`<a href="#n-${n.s}"><img src="img/crests/${n.s}.png" alt=""><span class="dot" style="background:${n.nc}"></span>${n.n}</a>`).join('');
+const FAMS=['sages','artisans','landowners','patrons','riders','hunters','traders','clerics','statesmen','champions'];
+let activeFam=null;
+const famEl=document.getElementById('famfilter');
+const hasFam=(n,fam)=>{ let c=genCombos(n); if(fam) c=c.filter(x=>x[0]===fam||x[1]===fam||x[2]===fam); return c.length>0; };
+function render(fam){
+  document.getElementById('main').innerHTML=NAT.map(n=>card(n,fam)).filter(Boolean).join('');
+  const vis=NAT.filter(n=>hasFam(n,fam));
+  document.getElementById('nav').innerHTML=vis.map(n=>`<a href="#n-${n.s}"><img src="img/crests/${n.s}.png" alt=""><span class="dot" style="background:${n.nc}"></span>${n.n}</a>`).join('');
+}
+function renderFilter(){
+  famEl.innerHTML=`<span class="fflabel">show combos with</span><span class="ff${!activeFam?' on':''}" data-f="">all</span>`+
+    FAMS.map(k=>`<span class="ff${activeFam===k?' on':''}" data-f="${k}"><img src="img/archetypes/${k}.png" alt="">${CLS[k]}</span>`).join('');
+}
+famEl.addEventListener('click',e=>{const c=e.target.closest('.ff'); if(!c)return; activeFam=c.dataset.f||null; renderFilter(); render(activeFam);});
+renderFilter();
+render(null);
 </script>
 </body>
 </html>
