@@ -86,14 +86,13 @@
 <div class="wrap">
   <header>
     <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
-    <p class="sub">Each nation is dealt a fixed hand of family classes. You field three: one capital, one military seat, a third, and feed at most one spammer. Below: every viable setup per nation, shown as a 7-city allocation.</p>
+    <p class="sub">Each nation is dealt a fixed hand of family classes. You field three: one capital, one military seat, a third, and feed at most one spammer. These are the <b>recommended</b> setups per nation — other combinations are viable too, these are just the strongest lines.</p>
   </header>
 
   <section class="legend">
     <div class="grp"><span class="h">Cap</span><b style="color:var(--good)">Good</b><span class="cls">Sages · Landowners · Artisans · Patrons</span></div>
     <div class="grp"><b style="color:var(--site)">Conditional</b><span class="cls">Traders · Hunters (resource) · Riders (2nd mil)</span></div>
-    <div class="grp"><b style="color:var(--gold-dim)">Workable</b><span class="cls">Clerics · Statesmen</span></div>
-    <div class="grp"><b style="color:var(--faint)">Avoid</b><span class="cls">Champions</span></div>
+    <div class="grp"><b style="color:var(--faint)">Avoid</b><span class="cls">Champions · Statesmen · Clerics (cap only if no other option)</span></div>
     <div class="grp"><span class="h">Key</span><span class="cls">badge = approx. cities of ~7 · <b style="color:var(--spam)">spam</b> family takes the most</span></div>
   </section>
 
@@ -136,7 +135,9 @@ function genCombos(nat){
   const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
   const spammers=fams.filter(k=>SPAM_SET.has(k));
   const hasLO=fams.includes('landowners');
-  const capable=k=> k!=='champions' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
+  const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
+  const otherCap=fams.some(k=> k!=='clerics' && capBase(k));   // a non-Clerics cap available?
+  const capable=k=> capBase(k) && (k!=='clerics' || !otherCap); // Clerics caps only as a last resort
   const milPool=milCount>0?mil:fams, isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
   const add=(cap,m,t,sp)=>{const key=cap+'|'+m+'|'+t+'|'+sp; if(!seen.has(key)){seen.add(key); out.push([cap,m,t,sp]);}};
