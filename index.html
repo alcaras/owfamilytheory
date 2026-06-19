@@ -92,13 +92,6 @@
     <p class="sub">Field three families — a capital, a military seat, a third — and feed one spammer. <b>Recommended</b> setups; other combos are viable.</p>
   </header>
 
-  <section class="legend">
-    <div class="grp"><span class="h">Cap</span><b style="color:var(--good)">Good</b><span class="cls">Sages · Landowners · Artisans · Patrons</span></div>
-    <div class="grp"><b style="color:var(--site)">Conditional</b><span class="cls">Traders · Hunters (resource) · Riders (2nd mil) · Clerics (civics)</span></div>
-    <div class="grp"><b style="color:var(--faint)">Avoid</b><span class="cls">Champions · Statesmen</span></div>
-    <div class="grp"><span class="h">Key</span><span class="cls">badge = approx. cities of ~7 · <b style="color:var(--spam)">spam</b> family takes the most</span></div>
-  </section>
-
   <nav class="nav" id="nav"></nav>
   <main id="main"></main>
   <div class="foot">family.xml · familyClass.xml · effectPlayer.xml — projected from the Old World install. Local reference.</div>
@@ -184,9 +177,9 @@ const colorOf=(nat,k)=>{const f=nat.fams.find(x=>x[0]===k);return f?{c:f[2],fg:f
 
 // resource synergies (from the game): Patrons → precious, Traders → Nets, Hunters → Camp
 const RESCAP={
-  patrons:{label:'precious', res:[['gold','Gold'],['silver','Silver'],['gem','Gem']]},
+  patrons:{label:'precious', res:[['gold','Gold'],['silver','Silver'],['gem','Gem'],['jade','Jade'],['salt','Salt']]},
   traders:{label:'net',      res:[['fish','Fish'],['crab','Crab'],['pearl','Pearl'],['dye','Dye']]},
-  hunters:{label:'camp',     res:[['fur','Fur'],['game','Game'],['ivory','Ivory']]},
+  hunters:{label:'camp',     res:[['fur','Fur'],['game','Game'],['elephant','Elephant']]},
 };
 
 function setupCol(nat,line){
