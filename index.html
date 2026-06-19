@@ -142,9 +142,11 @@ function genCombos(nat){
   // Riders/Hunters need a 2nd military family (for the mil seat). Champions/Statesmen never cap.
   const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
   const hasSages=fams.includes('sages');
-  const econCap=hasSages || fams.includes('patrons');   // a preferred economic cap present
-  // Clerics caps only when no Sages/Patrons; Artisans dropped when Sages present
-  const capable=k=> capBase(k) && (k!=='clerics' || !econCap) && !(k==='artisans' && hasSages);
+  const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
+  // Riders/Hunters/Clerics never capped over Sages/Patrons; Artisans dropped when Sages present
+  const capable=k=> capBase(k)
+    && !((k==='riders'||k==='hunters'||k==='clerics') && econCap)
+    && !(k==='artisans' && hasSages);
   const milPool=milCount>0?mil:fams, isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
   const add=(cap,m,t,sp)=>{const key=cap+'|'+m+'|'+t+'|'+sp; if(!seen.has(key)){seen.add(key); out.push([cap,m,t,sp]);}};
