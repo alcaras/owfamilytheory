@@ -54,9 +54,7 @@
   .hand .hc .fn{opacity:.78;font-style:italic;font-size:11px}
 
   /* setups grid */
-  .grouphd{font-family:Cinzel,serif; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); padding:13px 16px 0; display:flex; align-items:center; gap:9px}
-  .grouphd::after{content:""; flex:1; height:1px; background:var(--line)}
-  .setups{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:11px; padding:8px 16px 15px}
+  .setups{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:11px; padding:14px 16px 16px}
   .setup{background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px}
   .srow{display:flex; align-items:center; gap:8px; margin:7px 0}
   .srow .rl{font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); width:36px; flex:0 0 auto}
@@ -67,6 +65,9 @@
   .srow.spam .fchip{box-shadow:inset 0 0 0 1.5px var(--spam)}
   .srow .cbadge{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--muted); background:#222630; border:1px solid var(--line); border-radius:4px; padding:1px 6px; flex:0 0 auto; min-width:30px; text-align:center}
   .srow.spam .cbadge{color:var(--spam); border-color:var(--spam)}
+  .resnote{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); font-size:9.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+  .resnote .resicons{display:inline-flex; gap:3px}
+  .resnote img{width:15px; height:15px; object-fit:contain}
 
   .note{margin:0 16px 16px; padding:11px 13px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:13px; color:var(--muted)}
   .note b{color:var(--ink)}
@@ -134,20 +135,24 @@ const SPAM_SET=new Set(['statesmen','sages','clerics','landowners']);
 const ORD={patrons:0,artisans:1,sages:2,landowners:3,riders:4,hunters:5,traders:6,clerics:7,statesmen:8,champions:9};
 // cap display order: Sages first (slight pref over Artisans), then the rest
 const CAPORD={sages:0,artisans:1,landowners:2,riders:3,patrons:4,traders:5,hunters:6,clerics:7,statesmen:8,champions:9};
+const HORSE_UU=new Set(['Egypt','Hittite','Persia']);   // horse-UU nations → Riders is the mil seat
 function genCombos(nat){
   const fams=nat.fams.map(f=>f[0]);
   const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
   const spammers=fams.filter(k=>SPAM_SET.has(k));
   const hasLO=fams.includes('landowners');
+  const horseUU=HORSE_UU.has(nat.n) && fams.includes('riders');  // reserve Riders as the mil seat
   // Riders/Hunters need a 2nd military family (for the mil seat). Champions/Statesmen never cap.
   const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
   const hasSages=fams.includes('sages');
   const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
-  // Riders/Hunters/Clerics never capped over Sages/Patrons; Artisans dropped when Sages present
+  // Riders/Hunters/Clerics never capped over Sages/Patrons; Artisans dropped when Sages present;
+  // horse-UU nations reserve Riders for the mil seat (not the cap).
   const capable=k=> capBase(k)
     && !((k==='riders'||k==='hunters'||k==='clerics') && econCap)
-    && !(k==='artisans' && hasSages);
-  const milPool=milCount>0?mil:fams, isMil=k=> milCount>0 && MILITARY.has(k);
+    && !(k==='artisans' && hasSages)
+    && !(k==='riders' && horseUU);
+  const milPool=horseUU ? ['riders'] : (milCount>0?mil:fams), isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
   const add=(cap,m,t,sp)=>{const key=cap+'|'+m+'|'+t+'|'+sp; if(!seen.has(key)){seen.add(key); out.push([cap,m,t,sp]);}};
   for(const spam of spammers){
@@ -177,6 +182,13 @@ function genCombos(nat){
 
 const colorOf=(nat,k)=>{const f=nat.fams.find(x=>x[0]===k);return f?{c:f[2],fg:f[3]}:{c:'#444',fg:'#fff'};};
 
+// resource synergies (from the game): Patrons → precious, Traders → Nets, Hunters → Camp
+const RESCAP={
+  patrons:{label:'precious', res:[['gold','Gold'],['silver','Silver'],['gem','Gem']]},
+  traders:{label:'net',      res:[['fish','Fish'],['crab','Crab'],['pearl','Pearl'],['dye','Dye']]},
+  hunters:{label:'camp',     res:[['fur','Fur'],['game','Game'],['ivory','Ivory']]},
+};
+
 function setupCol(nat,line){
   const [cap,mil,third,spam]=line;
   const row=(label,k)=>{
@@ -186,16 +198,13 @@ function setupCol(nat,line){
       <div class="fchip" style="background:${c};color:${fg}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></div>
       <span class="cbadge" title="approx. cities">${n}</span></div>`;
   };
-  return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}</div>`;
+  const rc=RESCAP[cap];
+  const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span></div>`:'';
+  return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${note}</div>`;
 }
 
 function card(nat){
-  const combos=genCombos(nat);
-  // group by capital type: good-site caps (Patrons/Traders/Hunters) want a resource
-  // site; everything else (Sages/Landowners/Artisans/Riders) is terrain-independent.
-  const grp=(label,list)=> list.length ? `<div class="grouphd">${label}</div><div class="setups">${list.map(l=>setupCol(nat,l)).join('')}</div>` : '';
-  const body = grp('Terrain-independent caps', combos.filter(c=>!SITE.has(c[0])))
-             + grp('Excellent with resources', combos.filter(c=>SITE.has(c[0])));
+  const body=`<div class="setups">${genCombos(nat).map(l=>setupCol(nat,l)).join('')}</div>`;
   return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
     <div class="chead"><img class="crest" src="img/crests/${nat.s}.png" alt="">
       <div><div class="nm">${nat.n}</div>${nat.dlc?`<div class="dlc">${nat.dlc}</div>`:''}</div></div>
