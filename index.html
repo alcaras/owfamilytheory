@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Old World — Family Combo Theory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+  :root{
+    --bg:#0e0f12; --panel:#15171d; --panel2:#1b1e26; --line:#2a2e38;
+    --ink:#e8e2d2; --muted:#9aa0ad; --faint:#6b7280;
+    --gold:#c9a04a; --gold-dim:#7d6630; --spam:#e0683c; --good:#8fd36b; --site:#6fb0e6;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,sans-serif; font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px; margin:0 auto; padding:26px 20px 80px}
+  header h1{font-family:Cinzel,serif; font-weight:700; letter-spacing:.02em; font-size:29px; margin:0 0 4px}
+  header h1 .ac{color:var(--gold)}
+  header .sub{color:var(--muted); margin:0 0 20px; max-width:74ch}
+
+  /* compact legend */
+  .legend{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 15px; margin-bottom:18px; display:flex; flex-wrap:wrap; gap:7px 26px}
+  .legend .grp{display:flex; align-items:baseline; gap:8px; font-size:12.5px}
+  .legend .grp .h{font-family:Cinzel,serif; font-size:11px; letter-spacing:.05em; color:var(--gold); text-transform:uppercase}
+  .legend b{color:var(--ink)} .legend .cls{color:var(--muted)}
+  .legend .tag{font-size:8.5px; border:1px solid var(--site); color:var(--site); border-radius:4px; padding:1px 4px; text-transform:uppercase; letter-spacing:.03em}
+  .legend .tag.wk{border-color:var(--gold-dim); color:var(--gold-dim)}
+  .legend .key{display:inline-flex; align-items:center; gap:5px}
+  .legend .kp{width:13px;height:13px;border-radius:3px;background:#4a5568;position:relative}
+  .legend .kp.cap{box-shadow:inset 0 0 0 1.5px var(--gold)} .legend .kp.cap::after{content:"♛";position:absolute;inset:0;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff}
+
+  /* sticky jump nav */
+  .nav{position:sticky; top:0; z-index:5; margin:0 -20px 20px; padding:10px 20px; background:rgba(14,15,18,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:6px}
+  .nav a{display:inline-flex; align-items:center; gap:6px; padding:4px 10px 4px 6px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:12.5px; text-decoration:none}
+  .nav a:hover{border-color:var(--gold)}
+  .nav a img{width:16px;height:16px;object-fit:contain}
+  .nav a .dot{width:10px;height:10px;border-radius:3px}
+
+  /* nation card */
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-bottom:18px; overflow:hidden; scroll-margin-top:60px}
+  .chead{display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--line); border-left:6px solid var(--nc,#444)}
+  .chead img.crest{width:34px;height:34px;object-fit:contain}
+  .chead .nm{font-family:Cinzel,serif; font-weight:600; font-size:20px; line-height:1.1}
+  .chead .dlc{font-size:10.5px; color:var(--faint); letter-spacing:.03em; text-transform:uppercase; margin-top:2px}
+  .chead .grow{flex:1}
+  .chead .badge{font-size:10px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:5px; padding:3px 7px}
+
+  /* hand (roster reference) */
+  .hand{display:flex; flex-wrap:wrap; gap:6px; padding:11px 16px 2px}
+  .hand .hc{position:relative; display:flex; align-items:center; gap:6px; border-radius:6px; padding:4px 9px; overflow:hidden; isolation:isolate; font-size:12.5px}
+  .hand .hc::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:-1}
+  .hand .hc img{width:15px;height:15px;object-fit:contain}
+  .hand .hc .cn{font-family:Cinzel,serif;font-weight:600}
+  .hand .hc .fn{opacity:.78;font-style:italic;font-size:11px}
+
+  /* setups grid */
+  .setups{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:11px; padding:13px 16px 16px}
+  .setup{background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px}
+  .srow{display:flex; align-items:center; gap:8px; margin:7px 0}
+  .srow .rl{font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); width:36px; flex:0 0 auto}
+  .srow .fchip{position:relative; flex:1; display:flex; align-items:center; gap:7px; border-radius:5px; padding:5px 9px; isolation:isolate; min-width:0}
+  .srow .fchip::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:-1;border-radius:inherit}
+  .srow .fchip img{width:16px;height:16px;object-fit:contain;flex:0 0 auto}
+  .srow .fchip .cn{font-family:Cinzel,serif;font-weight:600;font-size:12.5px;white-space:nowrap}
+  .srow.spam .fchip{box-shadow:inset 0 0 0 1.5px var(--spam)}
+  .srow .cbadge{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--muted); background:#222630; border:1px solid var(--line); border-radius:4px; padding:1px 6px; flex:0 0 auto; min-width:30px; text-align:center}
+  .srow.spam .cbadge{color:var(--spam); border-color:var(--spam)}
+
+  .note{margin:0 16px 16px; padding:11px 13px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:13px; color:var(--muted)}
+  .note b{color:var(--ink)}
+
+  /* tamil supremacy */
+  .sup{display:flex; flex-direction:column; gap:7px; padding:13px 16px 4px}
+  .suprow{display:grid; grid-template-columns:auto 1fr; gap:11px; align-items:center; background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:9px 11px}
+  .suprow .fam{display:flex; align-items:center; gap:8px; min-width:160px}
+  .suprow .fam img{width:18px;height:18px;object-fit:contain}
+  .suprow .fam .cn{font-family:Cinzel,serif;font-weight:600}
+  .suprow .fam .sub{font-size:11px;color:var(--faint);font-style:italic}
+  .suprow .eff{font-size:12.5px}
+  .crown{color:var(--gold)}
+
+  .foot{margin-top:30px; padding-top:15px; border-top:1px solid var(--line); color:var(--faint); font-size:12px; font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
+    <p class="sub">Each nation is dealt a fixed hand of family classes. You field three: one capital, one military seat, a third, and feed at most one spammer. Below: every viable setup per nation, shown as a 7-city allocation.</p>
+  </header>
+
+  <section class="legend">
+    <div class="grp"><span class="h">Cap</span><b style="color:var(--good)">Good</b><span class="cls">Sages · Landowners · Artisans · Patrons</span></div>
+    <div class="grp"><b style="color:var(--site)">Conditional</b><span class="cls">Traders · Hunters (resource) · Riders (2nd mil)</span></div>
+    <div class="grp"><b style="color:var(--gold-dim)">Workable</b><span class="cls">Clerics · Statesmen</span></div>
+    <div class="grp"><b style="color:var(--faint)">Avoid</b><span class="cls">Champions</span></div>
+    <div class="grp"><span class="h">Key</span><span class="cls">badge = approx. cities of ~7 · <b style="color:var(--spam)">spam</b> family takes the most</span></div>
+  </section>
+
+  <nav class="nav" id="nav"></nav>
+  <main id="main"></main>
+  <div class="foot">family.xml · familyClass.xml · effectPlayer.xml — projected from the Old World install. Local reference.</div>
+</div>
+
+<script>
+const CLS={champions:'Champions',riders:'Riders',artisans:'Artisans',traders:'Traders',hunters:'Hunters',patrons:'Patrons',statesmen:'Statesmen',sages:'Sages',clerics:'Clerics',landowners:'Landowners'};
+const SITE=new Set(['traders','hunters','patrons']);
+const MILITARY=new Set(['champions','riders','hunters']);
+
+const NAT=[
+ {n:'Assyria',s:'assyria',dlc:'',nc:'#fadc3b',fams:[['champions','Sargonid','#b53c01','#f5f6f8'],['hunters','Tudiya','#658d16','#f5f6f8'],['patrons','Adasi','#aeaa94','#f5f6f8'],['clerics','Erishum','#ff829f','#f5f6f8']]},
+ {n:'Babylonia',s:'babylonia',dlc:'',nc:'#82c83e',fams:[['hunters','Kassite','#c7ddff','#111418'],['artisans','Chaldean','#6dadfb','#f5f6f8'],['traders','Isin','#ddff64','#111418'],['sages','Amorite','#8aff7f','#111418']]},
+ {n:'Carthage',s:'carthage',dlc:'',nc:'#f6efe1',fams:[['riders','Barcid','#4656b4','#f5f6f8'],['artisans','Magonid','#933838','#f5f6f8'],['traders','Hannonid','#158861','#f5f6f8'],['statesmen','Didonian','#b47800','#f5f6f8']]},
+ {n:'Egypt',s:'egypt',dlc:'',nc:'#f88f1f',fams:[['riders','Ramesside','#c79a52','#111418'],['landowners','Saite','#fdba4d','#111418'],['clerics','Amarna','#ab2c38','#f5f6f8'],['sages','Thutmosid','#c9c215','#111418']]},
+ {n:'Greece',s:'greece',dlc:'',nc:'#4b7dc9',fams:[['champions','Argead','#9293ff','#f5f6f8'],['artisans','Cypselid','#32da72','#f5f6f8'],['patrons','Seleucid','#fa6cf2','#f5f6f8'],['sages','Alcmaeonid','#3fffdd','#111418']]},
+ {n:'Hittite',s:'hittite',dlc:'',nc:'#80e3e8',fams:[['riders','Kussaran','#286ab0','#f5f6f8'],['landowners','Nenassan','#ed916d','#f5f6f8'],['patrons','Zalpuwan','#c7a5d6','#f5f6f8'],['traders','Hattusan','#8f4373','#f5f6f8']]},
+ {n:'Persia',s:'persia',dlc:'',nc:'#c04e4a',fams:[['clerics','Sasanid','#ddc00a','#111418'],['hunters','Mihranid','#d8cfae','#111418'],['riders','Arsacid','#ce9eff','#f5f6f8'],['statesmen','Achaemenid','#5597e9','#f5f6f8']]},
+ {n:'Rome',s:'rome',dlc:'',nc:'#ac5996',fams:[['champions','Fabius','#c77a5a','#f5f6f8'],['landowners','Claudius','#9d7fd6','#f5f6f8'],['patrons','Valerius','#6a86d7','#f5f6f8'],['statesmen','Julius','#c79b3a','#f5f6f8']]},
+ {n:'Aksum',s:'aksum',dlc:'Aksum',nc:'#c97889',fams:[['champions','Agaw','#c83500','#f5f6f8'],['traders','Agazi','#d3b800','#111418'],['clerics','Tigrayan','#00a000','#f5f6f8'],['patrons','Barya','#bdbcb4','#111418']]},
+ {n:'Kush',s:'kush',dlc:'Pharaohs of the Nile',nc:'#e1d96b',fams:[['hunters','Yam','#c83500','#f5f6f8'],['artisans','Irtjet','#006cb9','#f5f6f8'],['traders','Wawat','#b2509e','#f5f6f8'],['landowners','Setju','#60724c','#f5f6f8']]},
+ {n:'Maurya',s:'maurya',dlc:'Empires of the Indus',nc:'#bf7aff',fams:[['champions','Magadha','#3aa99c','#f5f6f8'],['hunters','Gandhara','#bdbcb4','#111418'],['statesmen','Kosala','#d4b736','#111418'],['sages','Avanti','#4aff89','#111418'],['patrons','Vatsa','#d67dd6','#f5f6f8'],['riders','Kamboja','#ff854a','#f5f6f8']]},
+ {n:'Tamil',s:'tamil',dlc:'Empires of the Indus',nc:'#00b281',tamil:true,fams:[['traders','Pandya','#4656b4','#f5f6f8'],['artisans','Chola','#933838','#f5f6f8'],['landowners','Chera','#6b7355','#f5f6f8']]},
+ {n:'Yuezhi',s:'yuezhi',dlc:'Empires of the Indus',nc:'#ad7e00',fams:[['riders','Xiumi','#97440f','#f5f6f8'],['champions','Shuangmi','#00ad7a','#f5f6f8'],['clerics','Xidun','#ad002c','#f5f6f8'],['traders','Dumi','#4e51a4','#f5f6f8']]},
+];
+
+// ── Generate every valid combo from the rules (no hand-listing) ─────────────
+// Field 3 families: CAP (cap-able) · MIL seat (a military family where the roster
+// has one; any seat family if none) · THIRD (non-military — the fed spammer, or a
+// non-spam seat). SPAM = one fed spammer, sitting in CAP (cap=spam) or THIRD.
+// Cap-able = any class but Champions; Riders/Hunters need a 2nd military family.
+// Landowners MUST be the spam if fielded — otherwise it is dropped, never benched.
+const SPAM_SET=new Set(['statesmen','sages','clerics','landowners']);
+const ORD={patrons:0,artisans:1,sages:2,landowners:3,riders:4,hunters:5,traders:6,clerics:7,statesmen:8,champions:9};
+function genCombos(nat){
+  const fams=nat.fams.map(f=>f[0]);
+  const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
+  const spammers=fams.filter(k=>SPAM_SET.has(k));
+  const hasLO=fams.includes('landowners');
+  const capable=k=> k!=='champions' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
+  const milPool=milCount>0?mil:fams, isMil=k=> milCount>0 && MILITARY.has(k);
+  const out=[], seen=new Set();
+  const add=(cap,m,t,sp)=>{const key=cap+'|'+m+'|'+t+'|'+sp; if(!seen.has(key)){seen.add(key); out.push([cap,m,t,sp]);}};
+  for(const spam of spammers){
+    const forbid=(hasLO && spam!=='landowners') ? new Set(['landowners']) : new Set();
+    for(const cap of fams){
+      if(!capable(cap) || forbid.has(cap)) continue;
+      if(cap===spam){                                       // capital is the fed spammer
+        for(const m of milPool){
+          if(m===cap || forbid.has(m) || (milCount>0 && !isMil(m))) continue;
+          for(const third of fams){
+            if(third===cap || third===m || forbid.has(third) || isMil(third)) continue;
+            if(milCount===0 && ORD[m]>=ORD[third]) continue;  // dedupe seat swap (no military)
+            add(cap,m,third,spam);
+          }
+        }
+      } else {                                              // spammer sits in the THIRD slot
+        for(const m of milPool){
+          if(m===cap || m===spam || forbid.has(m) || (milCount>0 && !isMil(m))) continue;
+          add(cap,m,spam,spam);
+        }
+      }
+    }
+  }
+  out.sort((a,b)=> (ORD[a[3]]-ORD[b[3]]) || (ORD[a[0]]-ORD[b[0]]) || (ORD[a[1]]-ORD[b[1]]) || (ORD[a[2]]-ORD[b[2]]));
+  return out;
+}
+
+const colorOf=(nat,k)=>{const f=nat.fams.find(x=>x[0]===k);return f?{c:f[2],fg:f[3]}:{c:'#444',fg:'#fff'};};
+
+function setupCol(nat,line){
+  const [cap,mil,third,spam]=line;
+  const row=(label,k)=>{
+    const{c,fg}=colorOf(nat,k), isSpam=k===spam;
+    const n = isSpam ? '4+' : (k==='patrons'||k==='artisans') ? '1' : '1-2';
+    return `<div class="srow${isSpam?' spam':''}"><span class="rl">${label}</span>
+      <div class="fchip" style="background:${c};color:${fg}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></div>
+      <span class="cbadge" title="approx. cities">${n}</span></div>`;
+  };
+  return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}</div>`;
+}
+
+function card(nat){
+  const body=`<div class="setups">${genCombos(nat).map(l=>setupCol(nat,l)).join('')}</div>`;
+  return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
+    <div class="chead"><img class="crest" src="img/crests/${nat.s}.png" alt="">
+      <div><div class="nm">${nat.n}</div>${nat.dlc?`<div class="dlc">${nat.dlc}</div>`:''}</div></div>
+    ${body}</article>`;
+}
+
+document.getElementById('main').innerHTML=NAT.map(card).join('');
+document.getElementById('nav').innerHTML=NAT.map(n=>`<a href="#n-${n.s}"><img src="img/crests/${n.s}.png" alt=""><span class="dot" style="background:${n.nc}"></span>${n.n}</a>`).join('');
+</script>
+</body>
+</html>
