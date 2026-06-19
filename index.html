@@ -219,6 +219,9 @@ const RESCAP={
   traders:{label:'net',      res:[['fish','Fish'],['crab','Crab'],['pearl','Pearl'],['dye','Dye']]},
   hunters:{label:'camp',     res:[['fur','Fur'],['game','Game']], tech:'Trapping'},
 };
+// Hunter-cap nations that already begin with Trapping — only Maurya doesn't, so the
+// "research Trapping early" hint is suppressed for these.
+const STARTS_TRAPPING=new Set(['Assyria','Persia']);
 
 function setupCol(nat,line){
   const [cap,mil,third,spam]=line;
@@ -230,7 +233,7 @@ function setupCol(nat,line){
       ${many}</div>`;
   };
   const rc=RESCAP[cap];
-  const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span>${rc.tech?`<span class="restech">· research ${rc.tech} early</span>`:''}</div>`:'';
+  const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span>${rc.tech && !STARTS_TRAPPING.has(nat.n)?`<span class="restech">· research ${rc.tech} early</span>`:''}</div>`:'';
   return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${note}</div>`;
 }
 
