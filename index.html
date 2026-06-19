@@ -89,7 +89,7 @@
 <div class="wrap">
   <header>
     <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
-    <p class="sub">Field three families — a capital, a military seat, a third — and feed one spammer. <b>Recommended</b> setups; other combos are viable.</p>
+    <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and the one family worth <b>spamming cities</b> for (the 4+). Honestly, you'll break these all the time — they're not rules, just gentle guidelines.</p>
   </header>
 
   <nav class="nav" id="nav"></nav>
@@ -135,6 +135,8 @@ function genCombos(nat){
   const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
   const spammers=fams.filter(k=>SPAM_SET.has(k));
   const hasLO=fams.includes('landowners');
+  // Statesmen is the preferred spam over Sages/Clerics when both are fieldable.
+  const spamOpts=spammers.includes('statesmen') ? spammers.filter(s=>s!=='sages'&&s!=='clerics') : spammers;
   const horseUU=HORSE_UU.has(nat.n) && fams.includes('riders');  // horse/elephant UU: Riders is the mil seat
   // Riders/Hunters need a 2nd military family (for the mil seat). Champions/Statesmen never cap.
   const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
@@ -149,7 +151,7 @@ function genCombos(nat){
   const milPool=horseUU ? ['riders'] : (milCount>0?mil:fams), isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
   const add=(cap,m,t,sp)=>{const key=cap+'|'+m+'|'+t+'|'+sp; if(!seen.has(key)){seen.add(key); out.push([cap,m,t,sp]);}};
-  for(const spam of spammers){
+  for(const spam of spamOpts){
     const forbid=(hasLO && spam!=='landowners') ? new Set(['landowners']) : new Set();
     for(const cap of fams){
       if(!capable(cap) || forbid.has(cap)) continue;
