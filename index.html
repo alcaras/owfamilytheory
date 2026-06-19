@@ -32,10 +32,10 @@
 
   /* sticky top bar: family filter + nation jump */
   .topbar{position:sticky; top:0; z-index:5; margin:0 -20px 20px; padding:10px 20px; background:rgba(14,15,18,.96); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
-  .famfilter{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:9px}
-  .famfilter .fflabel{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); margin-right:2px}
-  .ff{display:inline-flex; align-items:center; gap:5px; padding:4px 10px 4px 7px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:12px; cursor:pointer; user-select:none}
-  .ff img{width:15px; height:15px; object-fit:contain}
+  .famfilter{display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-bottom:9px}
+  .famfilter .fflabel{font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--faint); margin-right:1px}
+  .ff{display:inline-flex; align-items:center; gap:4px; padding:3px 8px 3px 6px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:11.5px; cursor:pointer; user-select:none; white-space:nowrap}
+  .ff img{width:14px; height:14px; object-fit:contain}
   .ff:hover{border-color:var(--gold-dim)}
   .ff.on{border-color:var(--gold); background:#23211a}
   .nav{display:flex; flex-wrap:wrap; gap:6px}
@@ -73,6 +73,8 @@
   .srow.spam .fchip{box-shadow:inset 0 0 0 1.5px var(--spam)}
   .srow .manyico{flex:0 0 auto; width:24px; display:inline-flex; align-items:center; justify-content:center; gap:2px}
   .srow .manyico i{width:3px; height:11px; background:var(--spam); border-radius:1px}
+  .manyico.ib{display:inline-flex; align-items:center; gap:2px; width:auto; vertical-align:-2px; margin:0 3px}
+  .manyico.ib i{width:3px; height:11px; background:var(--spam); border-radius:1px}
   .resnote{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); font-size:9.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; gap:6px; flex-wrap:wrap}
   .resnote .resicons{display:inline-flex; gap:3px}
   .resnote img{width:15px; height:15px; object-fit:contain}
@@ -102,7 +104,7 @@
   <header>
     <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
     <p class="mpctx">Thinking in the multiplayer context.</p>
-    <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and a family worth <b>having the most cities</b> with. These are mostly my own biases — I like a science cap and a military seat, and I'll spam the families I think are worth it (keeping the rest within ~3 cities, e.g. 1 Artisan to 4 Statesmen). You'll break all of this constantly; they're not rules, just gentle guidelines — hopefully a handy way to think through your city / family / nation setups.</p>
+    <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and a family worth <b>having the most cities</b> <span class="manyico ib" title="most cities"><i></i><i></i><i></i></span> with. These are mostly my own biases — I like a science cap and a military seat, and I'll spam the families I think are worth it (keeping the rest within ~3 cities, e.g. 1 Artisan to 4 Statesmen). You'll break all of this constantly; they're not rules, just gentle guidelines — hopefully a handy way to think through your city / family / nation setups.</p>
   </header>
 
   <div class="topbar">
