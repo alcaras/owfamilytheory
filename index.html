@@ -68,6 +68,7 @@
   .resnote{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); font-size:9.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; gap:6px; flex-wrap:wrap}
   .resnote .resicons{display:inline-flex; gap:3px}
   .resnote img{width:15px; height:15px; object-fit:contain}
+  .resnote .restech{color:var(--gold-dim); text-transform:none; letter-spacing:0}
   .swapnote{margin:0 16px 15px; padding:9px 12px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap}
   .swapnote b{color:var(--ink)}
   .swapnote img{width:16px; height:16px; object-fit:contain; vertical-align:-3px}
@@ -203,7 +204,7 @@ const colorOf=(nat,k)=>{const f=nat.fams.find(x=>x[0]===k);return f?{c:f[2],fg:f
 const RESCAP={
   patrons:{label:'precious', res:[['gold','Gold'],['silver','Silver'],['gem','Gem'],['pearl','Pearl'],['jade','Jade'],['ebony','Ebony']]},
   traders:{label:'net',      res:[['fish','Fish'],['crab','Crab'],['pearl','Pearl'],['dye','Dye']]},
-  hunters:{label:'camp',     res:[['fur','Fur'],['game','Game']]},
+  hunters:{label:'camp',     res:[['fur','Fur'],['game','Game']], tech:'Trapping'},
 };
 
 function setupCol(nat,line){
@@ -216,7 +217,7 @@ function setupCol(nat,line){
       ${many}</div>`;
   };
   const rc=RESCAP[cap];
-  const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span></div>`:'';
+  const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span>${rc.tech?`<span class="restech">· research ${rc.tech} early</span>`:''}</div>`:'';
   return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${note}</div>`;
 }
 
