@@ -149,11 +149,10 @@ function genCombos(nat){
   const hasSages=fams.includes('sages');
   const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
   // Riders/Clerics never capped over Sages/Patrons (Hunters/Traders are resource caps —
-  // viable over Patrons with the right site); Artisans dropped when Sages present;
-  // horse-UU nations reserve Riders for the mil seat (not the cap).
+  // viable over Patrons with the right site); Sages just sorts ahead of Artisans (slight
+  // pref); horse-UU nations reserve Riders for the mil seat (not the cap).
   const capable=k=> capBase(k)
     && !((k==='riders'||k==='clerics') && econCap)
-    && !(k==='artisans' && hasSages)
     && !(k==='riders' && horseUU);
   const milPool=horseUU ? ['riders'] : (milCount>0?mil:fams), isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
