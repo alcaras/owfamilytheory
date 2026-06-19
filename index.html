@@ -68,6 +68,9 @@
   .resnote{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); font-size:9.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; gap:6px; flex-wrap:wrap}
   .resnote .resicons{display:inline-flex; gap:3px}
   .resnote img{width:15px; height:15px; object-fit:contain}
+  .swapnote{margin:0 16px 15px; padding:9px 12px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+  .swapnote b{color:var(--ink)}
+  .swapnote img{width:16px; height:16px; object-fit:contain; vertical-align:-3px}
 
   .note{margin:0 16px 16px; padding:11px 13px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:13px; color:var(--muted)}
   .note b{color:var(--ink)}
@@ -142,10 +145,11 @@ function genCombos(nat){
   const capBase=k=> k!=='champions' && k!=='statesmen' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
   const hasSages=fams.includes('sages');
   const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
-  // Riders/Hunters/Clerics never capped over Sages/Patrons; Artisans dropped when Sages present;
+  // Riders/Clerics never capped over Sages/Patrons (Hunters/Traders are resource caps —
+  // viable over Patrons with the right site); Artisans dropped when Sages present;
   // horse-UU nations reserve Riders for the mil seat (not the cap).
   const capable=k=> capBase(k)
-    && !((k==='riders'||k==='hunters'||k==='clerics') && econCap)
+    && !((k==='riders'||k==='clerics') && econCap)
     && !(k==='artisans' && hasSages)
     && !(k==='riders' && horseUU);
   const milPool=horseUU ? ['riders'] : (milCount>0?mil:fams), isMil=k=> milCount>0 && MILITARY.has(k);
@@ -172,7 +176,22 @@ function genCombos(nat){
       }
     }
   }
-  out.sort((a,b)=> (CAPORD[a[0]]-CAPORD[b[0]]) || (ORD[a[3]]-ORD[b[3]]) || (ORD[a[1]]-ORD[b[1]]) || (ORD[a[2]]-ORD[b[2]]));
+  // No-spam alternative when Landowners is the only spammer — don't force the LO spam.
+  if(spammers.length===1 && spammers[0]==='landowners'){
+    const forbid=new Set(['landowners']);
+    for(const cap of fams){
+      if(!capable(cap) || forbid.has(cap)) continue;
+      for(const m of milPool){
+        if(m===cap || forbid.has(m) || (milCount>0 && !isMil(m))) continue;
+        for(const third of fams){
+          if(third===cap || third===m || forbid.has(third) || isMil(third)) continue;
+          if(milCount===0 && ORD[m]>=ORD[third]) continue;
+          add(cap,m,third,null);   // null = no spam family
+        }
+      }
+    }
+  }
+  out.sort((a,b)=> (CAPORD[a[0]]-CAPORD[b[0]]) || ((ORD[a[3]]??-1)-(ORD[b[3]]??-1)) || (ORD[a[1]]-ORD[b[1]]) || (ORD[a[2]]-ORD[b[2]]));
   return out;
 }
 
@@ -201,12 +220,21 @@ function setupCol(nat,line){
   return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${note}</div>`;
 }
 
+// horse/elephant-UU nations with a 2nd military family: Riders is the mil seat, but
+// you can swap it for the other military family once you have the UU's resource.
+const UU_SWAP={
+  Persia:{res:['horse','Horse'], alts:['Hunters']},
+  Maurya:{res:['elephant','Elephant'], alts:['Champions','Hunters']},
+};
+
 function card(nat){
   const body=`<div class="setups">${genCombos(nat).map(l=>setupCol(nat,l)).join('')}</div>`;
+  const sw=UU_SWAP[nat.n];
+  const swap=sw?`<div class="swapnote">swap the <b>Riders</b> mil seat for ${sw.alts.join(' / ')} once you have <img src="img/resources/${sw.res[0]}.png" title="${sw.res[1]}" alt="${sw.res[1]}"> ${sw.res[1]}</div>`:'';
   return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
     <div class="chead"><img class="crest" src="img/crests/${nat.s}.png" alt="">
       <div><div class="nm">${nat.n}</div>${nat.dlc?`<div class="dlc">${nat.dlc}</div>`:''}</div></div>
-    ${body}</article>`;
+    ${body}${swap}</article>`;
 }
 
 document.getElementById('main').innerHTML=NAT.map(card).join('');
