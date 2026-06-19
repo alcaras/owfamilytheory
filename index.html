@@ -63,8 +63,8 @@
   .srow .fchip img{width:16px;height:16px;object-fit:contain;flex:0 0 auto}
   .srow .fchip .cn{font-family:Cinzel,serif;font-weight:600;font-size:12.5px;white-space:nowrap}
   .srow.spam .fchip{box-shadow:inset 0 0 0 1.5px var(--spam)}
-  .srow .cbadge{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--muted); background:#222630; border:1px solid var(--line); border-radius:4px; padding:1px 6px; flex:0 0 auto; min-width:30px; text-align:center}
-  .srow.spam .cbadge{color:var(--spam); border-color:var(--spam)}
+  .srow .manyico{flex:0 0 auto; width:24px; display:inline-flex; align-items:center; justify-content:center; gap:2px}
+  .srow .manyico i{width:3px; height:11px; background:var(--spam); border-radius:1px}
   .resnote{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); font-size:9.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; gap:6px; flex-wrap:wrap}
   .resnote .resicons{display:inline-flex; gap:3px}
   .resnote img{width:15px; height:15px; object-fit:contain}
@@ -92,7 +92,7 @@
 <div class="wrap">
   <header>
     <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
-    <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and the one family worth <b>spamming cities</b> for (the 4+). Honestly, you'll break these all the time — they're not rules, just gentle guidelines.</p>
+    <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and a family worth <b>having the most cities</b> with. These are mostly my own biases — I like a science cap and a military seat, and I'll spam the families I think are worth it (keeping the rest within ~3 cities, e.g. 1 Artisan to 4 Statesmen). You'll break all of this constantly; they're not rules, just gentle guidelines — hopefully a handy way to think through your city / family / nation setups.</p>
   </header>
 
   <nav class="nav" id="nav"></nav>
@@ -210,10 +210,10 @@ function setupCol(nat,line){
   const [cap,mil,third,spam]=line;
   const row=(label,k)=>{
     const{c,fg}=colorOf(nat,k), isSpam=k===spam;
-    const n = isSpam ? '4+' : (k==='patrons'||k==='artisans') ? '1' : '1-2';
+    const many=isSpam?`<span class="manyico" title="the family to grow — your most cities"><i></i><i></i><i></i></span>`:`<span class="manyico"></span>`;
     return `<div class="srow${isSpam?' spam':''}"><span class="rl">${label}</span>
       <div class="fchip" style="background:${c};color:${fg}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></div>
-      <span class="cbadge" title="approx. cities">${n}</span></div>`;
+      ${many}</div>`;
   };
   const rc=RESCAP[cap];
   const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span></div>`:'';
@@ -230,7 +230,7 @@ const UU_SWAP={
 function card(nat){
   const body=`<div class="setups">${genCombos(nat).map(l=>setupCol(nat,l)).join('')}</div>`;
   const sw=UU_SWAP[nat.n];
-  const swap=sw?`<div class="swapnote">swap the <b>Riders</b> mil seat for ${sw.alts.join(' / ')} once you have <img src="img/resources/${sw.res[0]}.png" title="${sw.res[1]}" alt="${sw.res[1]}"> ${sw.res[1]}</div>`:'';
+  const swap=sw?`<div class="swapnote">swap the <b>Riders</b> mil seat for ${sw.alts.join(' / ')} if you found it on <img src="img/resources/${sw.res[0]}.png" title="${sw.res[1]}" alt="${sw.res[1]}"> ${sw.res[1]}</div>`:'';
   return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
     <div class="chead"><img class="crest" src="img/crests/${nat.s}.png" alt="">
       <div><div class="nm">${nat.n}</div>${nat.dlc?`<div class="dlc">${nat.dlc}</div>`:''}</div></div>
