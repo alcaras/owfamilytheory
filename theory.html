@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Old World — Family Theory: Caps · Seats · Spammers</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+  :root{
+    --bg:#0e0f12; --panel:#15171d; --panel2:#1b1e26; --line:#2a2e38;
+    --ink:#e8e2d2; --muted:#9aa0ad; --faint:#6b7280;
+    --gold:#c9a04a; --gold-dim:#7d6630; --spam:#e0683c; --good:#8fd36b; --site:#6fb0e6;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,sans-serif; font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px; margin:0 auto; padding:26px 20px 80px}
+  a{color:var(--gold)}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; text-decoration:none; color:var(--muted); border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:4px 12px; margin-bottom:18px}
+  .back:hover{border-color:var(--gold); color:var(--ink)}
+  header h1{font-family:Cinzel,serif; font-weight:700; letter-spacing:.02em; font-size:28px; margin:0 0 6px}
+  header h1 .ac{color:var(--gold)}
+  header .sub{color:var(--muted); margin:0 0 8px; max-width:74ch}
+
+  .intro{background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:15px 17px; margin:18px 0 26px; color:var(--muted)}
+  .intro b{color:var(--ink)}
+  .intro .roles{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .intro .rolepill{display:inline-flex; align-items:baseline; gap:7px; border:1px solid var(--line); background:var(--panel2); border-radius:8px; padding:6px 11px; font-size:12.5px}
+  .intro .rolepill .rk{font-family:Cinzel,serif; font-weight:600; color:var(--ink)}
+  .intro .rolepill .rd{color:var(--faint)}
+
+  /* role section */
+  .sec{margin:0 0 30px}
+  .sec > .sh{display:flex; align-items:baseline; gap:12px; padding:0 2px 10px; border-bottom:1px solid var(--line); margin-bottom:14px}
+  .sec > .sh .t{font-family:Cinzel,serif; font-weight:700; font-size:20px; letter-spacing:.03em}
+  .sec > .sh .d{color:var(--faint); font-size:12.5px}
+  .sec.cap > .sh .t{color:var(--good)}
+  .sec.seat > .sh .t{color:var(--site)}
+  .sec.spam > .sh .t{color:var(--spam)}
+
+  .tier{margin:0 0 6px}
+  .tier .tl{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); margin:14px 2px 8px}
+  .tier:first-child .tl{margin-top:0}
+
+  .frow{display:grid; grid-template-columns:172px 1fr; gap:14px; align-items:start; padding:9px 11px; background:var(--panel); border:1px solid var(--line); border-radius:9px; margin-bottom:7px}
+  .frow.dim{opacity:.62}
+  .fam{display:flex; align-items:center; gap:8px; min-width:0}
+  .fam .chip{position:relative; display:inline-flex; align-items:center; gap:7px; border-radius:6px; padding:5px 10px; isolation:isolate}
+  .fam .chip::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:-1;border-radius:inherit}
+  .fam .chip img{width:17px;height:17px;object-fit:contain}
+  .fam .chip .cn{font-family:Cinzel,serif; font-weight:600; font-size:13.5px; white-space:nowrap}
+  .badge{align-self:center; font-size:9px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; border-radius:5px; padding:2px 6px; border:1px solid var(--line); color:var(--muted); white-space:nowrap}
+  .badge.best{border-color:var(--gold); color:var(--gold)}
+  .badge.res{border-color:var(--site); color:var(--site)}
+  .badge.flex{border-color:var(--gold-dim); color:var(--gold)}
+  .badge.must{border-color:var(--spam); color:var(--spam)}
+  .badge.never{border-color:#4a3030; color:#b06b6b}
+  .why{font-size:13px; color:var(--muted)}
+  .why b{color:var(--ink)}
+  .why .resicons{display:inline-flex; gap:3px; vertical-align:-3px; margin:0 2px}
+  .why .resicons img{width:15px;height:15px;object-fit:contain}
+
+  .closer{background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; padding:13px 15px; color:var(--muted); font-size:13.5px}
+  .closer b{color:var(--ink)}
+  .manyico{display:inline-flex; align-items:center; gap:2px; vertical-align:-2px; margin:0 2px}
+  .manyico i{width:3px; height:11px; background:var(--spam); border-radius:1px}
+
+  .foot{margin-top:34px; padding-top:15px; border-top:1px solid var(--line); color:var(--faint); font-size:12px; font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← back to the combo board</a>
+  <header>
+    <h1>The <span class="ac">Family Theory</span></h1>
+    <p class="sub">Why each family lands where it does — which make good <b>capitals</b>, which make good <b>military seats</b>, and which are worth <b>spamming</b>. Multiplayer-flavoured, and all just my own biases.</p>
+  </header>
+
+  <div class="intro">
+    Every game you're really doing one thing: slotting a nation's families into a handful of jobs. I want
+    <b>one capital</b> (ideally science), <b>one military seat</b> I keep small for units &amp; generals, and
+    <b>one&nbsp;–&nbsp;two spam families</b> I grow as wide as I can. Everything else I keep within ~3 cities of the
+    pack (e.g. 1 Artisan to 4 Statesmen). A family is only "good" relative to the <i>role</i> you're asking it to play.
+    <div class="roles">
+      <span class="rolepill"><span class="rk" style="color:var(--good)">Capital</span><span class="rd">one tall science / resource city</span></span>
+      <span class="rolepill"><span class="rk" style="color:var(--site)">Mil seat</span><span class="rd">kept small — units, XP, generals</span></span>
+      <span class="rolepill"><span class="rk" style="color:var(--spam)">Spam</span><span class="rd">grow it widest <span class="manyico"><i></i><i></i><i></i></span></span></span>
+    </div>
+  </div>
+
+  <main id="main"></main>
+
+  <div class="closer">
+    <b>None of this is a rule.</b> You'll break all of it constantly — a great resource start, a Wonder, a UU, a
+    war that hands you a free city. These are just the defaults I fall back to when nothing on the map argues
+    otherwise. Whatever I'm not capping or spamming, I keep within roughly three cities of the leader so no single
+    family runs away from the rest.
+  </div>
+
+  <div class="foot">family.xml · familyClass.xml · effectPlayer.xml — projected from the Old World install. Local reference.</div>
+</div>
+
+<script>
+const CLS={champions:'Champions',riders:'Riders',artisans:'Artisans',traders:'Traders',hunters:'Hunters',patrons:'Patrons',statesmen:'Statesmen',sages:'Sages',clerics:'Clerics',landowners:'Landowners'};
+// brand-ish colors so chips read like the board
+const COL={sages:'#3fffdd',artisans:'#32da72',patrons:'#fa6cf2',traders:'#158861',hunters:'#658d16',landowners:'#fdba4d',clerics:'#ab2c38',riders:'#286ab0',champions:'#b53c01',statesmen:'#5597e9'};
+const FG={sages:'#111418',artisans:'#111418',patrons:'#f5f6f8',traders:'#f5f6f8',hunters:'#f5f6f8',landowners:'#111418',clerics:'#f5f6f8',riders:'#f5f6f8',champions:'#f5f6f8',statesmen:'#f5f6f8'};
+const ricon=(k,n)=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`;
+const reslist=arr=>`<span class="resicons">${arr.map(([k,n])=>ricon(k,n)).join('')}</span>`;
+
+const PRECIOUS=[['gold','Gold'],['silver','Silver'],['gem','Gem'],['pearl','Pearl'],['jade','Jade'],['ebony','Ebony']];
+const NETS=[['fish','Fish'],['crab','Crab'],['pearl','Pearl'],['dye','Dye']];
+const CAMPS=[['fur','Fur'],['game','Game']];
+
+// ── CAPITALS ────────────────────────────────────────────────────────────────
+const CAPS=[
+ {grp:'Science caps — my default', items:[
+   {k:'sages', badge:['best','top cap'], why:`<b>Science.</b> My go-to capital. Science compounds in one tall, specialist-stacked city, and Sages is the cleanest way to get there. Sorts a hair ahead of Artisans purely on preference.`},
+   {k:'artisans', why:`<b>Specialists &amp; production.</b> The other science capital — almost interchangeable with Sages. Pick whichever your start and Wonders favour.`},
+ ]},
+ {grp:'Resource caps — cap here when the start gives you the resource', items:[
+   {k:'patrons', badge:['res','precious'], why:`Unlocks <b>precious</b> luxuries ${reslist(PRECIOUS)} — a fantastic, happy capital when the land is rich in them.`},
+   {k:'traders', badge:['res','net'], why:`Unlocks <b>net</b> resources ${reslist(NETS)} on a coastal start. (Camel/Elephant nets give Orders, not a cap reason — those I'd rather spam around.)`},
+   {k:'hunters', badge:['res','camp'], why:`Unlocks <b>camp</b> resources ${reslist(CAMPS)} — a strong cap on a hunting start, but <b>research Trapping early</b>. With no camps it stays a military seat instead.`},
+ ]},
+ {grp:'Situational — only with nothing better', items:[
+   {k:'landowners', why:`A fine food/growth capital in a pinch, but Landowners almost always wants to be my spam instead (see below) — so it rarely ends up here.`},
+   {k:'clerics', why:`A capital only over a weak field — <b>never</b> ahead of Sages or Patrons.`},
+   {k:'riders', why:`The lowest-priority real cap: it needs a <i>second</i> military family to spare it for the role, never caps over Sages/Patrons, and on a horse/elephant-UU nation it's reserved for the seat.`},
+ ]},
+ {grp:'Never the capital', items:[
+   {k:'champions', dim:true, badge:['never','never'], why:`Pure military. It belongs in the seat, never the cap.`},
+   {k:'statesmen', dim:true, badge:['never','≈never'], why:`Statesmen wants to be <i>spammed</i>, not capped. The one exception I make: <b>Persia</b>, whose Orders economy can give up its double-decree for a Statesmen cap when the start has no camp/grove sites for Hunters/Clerics.`},
+ ]},
+];
+
+// ── MIL SEATS ───────────────────────────────────────────────────────────────
+const SEATS=[
+ {grp:'The military families — pick one to sit as the seat', items:[
+   {k:'champions', why:`The cleanest seat. Units, XP, free promotions, generals. If I have it, this is usually where my military lives.`},
+   {k:'riders', why:`The cavalry seat. On <b>horse / elephant-UU nations</b> (Egypt, Hittite, Persia, Carthage, Maurya, Tamil) this is <i>the</i> seat by default — then swap it for the other military family once you've found the UU resource (Horse / Elephant).`},
+   {k:'hunters', why:`A military seat whenever I'm not capping it on camps. Doubles as scouts and ranged.`},
+ ]},
+ {grp:'The flex', items:[
+   {k:'landowners', badge:['flex','flex'], why:`Not a military family — but with a nation whose <b>military bonus carries the seat for free</b> (e.g. <b>Rome</b>), Landowners can sit in the seat slot and even double as a spam. That's the one time a non-military family holds the seat.`},
+ ]},
+];
+
+// ── SPAMMERS ────────────────────────────────────────────────────────────────
+const SPAMS=[
+ {grp:'Grow it widest', items:[
+   {k:'statesmen', badge:['best','first pick'], why:`<b>Wide Orders.</b> My first choice to spam — preferred over Sages/Clerics whenever I can field it. More cities = more Orders = a snowball.`},
+   {k:'sages', why:`Science scales with city count too — so when Sages <i>isn't</i> my capital, it's a great thing to spam instead.`},
+   {k:'clerics', why:`Happiness &amp; culture across a wide empire. A solid spam when Statesmen isn't on the roster.`},
+ ]},
+ {grp:'Special rule', items:[
+   {k:'landowners', badge:['must','spam-or-drop'], why:`<b>Must-spam-or-drop.</b> Landowners is all growth — if I field it, I grow it widest; if I can't commit to that, I cut it entirely. I never bench it as a single lone seat.`},
+ ]},
+];
+
+function chip(k){
+  return `<span class="chip" style="background:${COL[k]};color:${FG[k]}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></span>`;
+}
+function frow(it){
+  const badge=it.badge?`<span class="badge ${it.badge[0]}">${it.badge[1]}</span>`:'';
+  return `<div class="frow${it.dim?' dim':''}"><div class="fam">${chip(it.k)}${badge}</div><div class="why">${it.why}</div></div>`;
+}
+function tier(t){
+  return `<div class="tier"><div class="tl">${t.grp}</div>${t.items.map(frow).join('')}</div>`;
+}
+function section(cls,letter,title,desc,groups){
+  return `<section class="sec ${cls}">
+    <div class="sh"><span class="t">${title}</span><span class="d">${desc}</span></div>
+    ${groups.map(tier).join('')}
+  </section>`;
+}
+
+document.getElementById('main').innerHTML=
+  section('cap','C','Capitals','one tall city — science first, resources when the map offers them',CAPS)+
+  section('seat','M','Military seats','kept small: units, generals, XP',SEATS)+
+  section('spam','S','Spammers','the families I grow as wide as the map allows',SPAMS);
+</script>
+</body>
+</html>

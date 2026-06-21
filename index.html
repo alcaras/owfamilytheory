@@ -17,7 +17,11 @@
   header h1{font-family:Cinzel,serif; font-weight:700; letter-spacing:.02em; font-size:29px; margin:0 0 4px}
   header h1 .ac{color:var(--gold)}
   header .mpctx{color:var(--gold); font-style:italic; font-size:13px; margin:0 0 8px}
-  header .sub{color:var(--muted); margin:0 0 20px; max-width:74ch}
+  header .sub{color:var(--muted); margin:0 0 14px; max-width:74ch}
+  header .theory-link{display:inline-flex; align-items:center; gap:8px; margin:0 0 20px; padding:8px 14px; border:1px solid var(--gold-dim); background:#1a1810; border-radius:9px; color:var(--ink); text-decoration:none; font-size:13px}
+  header .theory-link:hover{border-color:var(--gold); background:#221f12}
+  header .theory-link b{color:var(--gold); font-family:Cinzel,serif; font-weight:600}
+  header .theory-link .arr{color:var(--gold); margin-left:2px}
 
   /* compact legend */
   .legend{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 15px; margin-bottom:18px; display:flex; flex-wrap:wrap; gap:7px 26px}
@@ -105,6 +109,7 @@
     <h1>Old World — <span class="ac">Family Combo Theory</span></h1>
     <p class="mpctx">Thinking in the multiplayer context.</p>
     <p class="sub">For each nation: which family to make your <b>capital</b>, which to keep as a <b>military seat</b>, your <b>third</b> family, and a family worth <b>having the most cities</b> <span class="manyico ib" title="most cities"><i></i><i></i><i></i></span> with. These are mostly my own biases — I like a science cap and a military seat, and I'll spam the families I think are worth it (keeping the rest within ~3 cities, e.g. 1 Artisan to 4 Statesmen). You'll break all of this constantly; they're not rules, just gentle guidelines — hopefully a handy way to think through your city / family / nation setups.</p>
+    <a class="theory-link" href="theory.html"><b>The Theory</b> — why these caps, seats &amp; spammers<span class="arr">→</span></a>
   </header>
 
   <div class="topbar">
@@ -227,17 +232,20 @@ const RESCAP={
 const STARTS_TRAPPING=new Set(['Assyria','Persia']);
 
 function setupCol(nat,line){
-  const [cap,mil,third,spam]=line;
+  const [cap,mil,third,spam,xnote]=line;
+  const spamSet=spam==null?new Set():new Set(Array.isArray(spam)?spam:[spam]);
+  const dual=spamSet.size>1;
   const row=(label,k)=>{
-    const{c,fg}=colorOf(nat,k), isSpam=k===spam;
-    const many=isSpam?`<span class="manyico" title="the family to grow — your most cities"><i></i><i></i><i></i></span>`:`<span class="manyico"></span>`;
+    const{c,fg}=colorOf(nat,k), isSpam=spamSet.has(k);
+    const many=isSpam?`<span class="manyico" title="${dual?'grow this evenly with the other spam':'the family to grow — your most cities'}"><i></i><i></i><i></i></span>`:`<span class="manyico"></span>`;
     return `<div class="srow${isSpam?' spam':''}"><span class="rl">${label}</span>
       <div class="fchip" style="background:${c};color:${fg}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></div>
       ${many}</div>`;
   };
   const rc=RESCAP[cap];
   const note=rc?`<div class="resnote">excellent with ${rc.label}<span class="resicons">${rc.res.map(([k,n])=>`<img src="img/resources/${k}.png" title="${n}" alt="${n}">`).join('')}</span>${rc.tech && !STARTS_TRAPPING.has(nat.n)?`<span class="restech">· research ${rc.tech} early</span>`:''}</div>`:'';
-  return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${note}</div>`;
+  const xn=xnote?`<div class="resnote restech" style="text-transform:none;letter-spacing:0">${xnote}</div>`:'';
+  return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${xn}${note}</div>`;
 }
 
 // horse/elephant-UU nations with a 2nd military family: Riders is the mil seat, but
@@ -247,8 +255,21 @@ const UU_SWAP={
   Maurya:{res:['elephant','Elephant'], alts:['Champions','Hunters']},
 };
 
+// Hand-authored combos the rule engine won't generate (it forbids a non-military
+// mil seat and only ever marks one spam). Rome's military bonus lets Landowners
+// hold the seat, freeing an even Landowners + Statesmen double-spam.
+const EXTRA={
+  Rome:[['patrons','landowners','statesmen',['landowners','statesmen'],
+    'Rome’s military bonus carries the mil seat — so Landowners can sit there and still spam, splitting cities evenly with Statesmen.']],
+  Egypt:[['sages','landowners','clerics',null,
+    'Eco build — drop Riders entirely. Sage cap, Landowners as the mil seat, Clerics third; a balanced three-family comp, so grow them evenly with no single spam.']],
+  Hittite:[['patrons','landowners','traders','landowners',
+    'Eco build — drop Riders entirely. Patron cap, Traders third, and Landowners doubles as the mil seat and your spam — grow it widest.']],
+};
+
 function card(nat, fam){
   let combos=genCombos(nat);
+  if(EXTRA[nat.n]) combos=combos.concat(EXTRA[nat.n]);
   if(fam) combos=combos.filter(c=> c[0]===fam || c[1]===fam || c[2]===fam);
   if(!combos.length) return '';
   const body=`<div class="setups">${combos.map(l=>setupCol(nat,l)).join('')}</div>`;
