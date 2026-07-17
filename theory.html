@@ -98,10 +98,11 @@ const CLS={champions:'Champions',riders:'Riders',artisans:'Artisans',traders:'Tr
 const COL={sages:'#3fffdd',artisans:'#32da72',patrons:'#fa6cf2',traders:'#158861',hunters:'#658d16',landowners:'#fdba4d',clerics:'#ab2c38',riders:'#286ab0',champions:'#b53c01',statesmen:'#5597e9'};
 const FG={sages:'#111418',artisans:'#111418',patrons:'#f5f6f8',traders:'#f5f6f8',hunters:'#f5f6f8',landowners:'#111418',clerics:'#f5f6f8',riders:'#f5f6f8',champions:'#f5f6f8',statesmen:'#f5f6f8'};
 // Plain lists — families in each role, no commentary. Landowners is the one
-// flex (a mil seat only when a military bonus carries it).
-const CAPS=['sages','artisans','patrons','traders','hunters','landowners','clerics','riders'];
+// flex (a mil seat only when a military bonus carries it). Clerics appear
+// nowhere — never fielded.
+const CAPS=['sages','artisans','patrons','traders','hunters','landowners','riders','statesmen'];
 const SEATS=[['champions'],['riders'],['hunters'],['landowners','flex']];
-const SPAMS=['statesmen','sages','clerics','landowners'];
+const SPAMS=['statesmen','sages','landowners'];
 
 function chip(k){
   return `<span class="chip" style="background:${COL[k]};color:${FG[k]}"><img src="img/archetypes/${k}.png" alt=""><span class="cn">${CLS[k]}</span></span>`;

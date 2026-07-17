@@ -143,36 +143,35 @@ const NAT=[
 
 // ── Generate every valid combo from the rules (no hand-listing) ─────────────
 // Field 3 families: CAP (cap-able) · MIL seat (a military family where the roster
-// has one; any seat family if none) · THIRD (non-military — the fed spammer, or a
-// non-spam seat). SPAM = one fed spammer, sitting in CAP (cap=spam) or THIRD.
+// has one; any seat family if none) · THIRD (the fed spammer, or a non-spam seat —
+// Hunters/Riders can sit third, Champions never). SPAM = one fed spammer, sitting
+// in CAP (cap=spam) or THIRD.
 // Cap-able = any class but Champions; Riders/Hunters need a 2nd military family.
 // Landowners MUST be the spam if fielded — otherwise it is dropped, never benched.
-const SPAM_SET=new Set(['statesmen','sages','clerics','landowners']);
-const ORD={patrons:0,artisans:1,sages:2,landowners:3,riders:4,hunters:5,traders:6,clerics:7,statesmen:8,champions:9};
+// Clerics are never fielded at all — always dropped.
+const SPAM_SET=new Set(['statesmen','sages','landowners']);
+const ORD={patrons:0,artisans:1,sages:2,landowners:3,riders:4,hunters:5,traders:6,statesmen:7,champions:8};
 // cap display order: Sages first (slight pref over Artisans), then the rest
-const CAPORD={sages:0,artisans:1,landowners:2,riders:3,patrons:4,traders:5,hunters:6,clerics:7,statesmen:8,champions:9};
+const CAPORD={sages:0,artisans:1,landowners:2,riders:3,patrons:4,traders:5,hunters:6,statesmen:7,champions:8};
 // horse/elephant-UU nations (not Yuezhi) → Riders is the only mil seat
 const HORSE_UU=new Set(['Egypt','Hittite','Persia','Carthage','Maurya','Tamil']);
-// Statesmen is normally never a capital, but Persia's Orders economy can give up the
-// double-decree — a viable cap when the start lacks camp/grove sites for Hunters/Clerics.
-const STATESMEN_CAP=new Set(['Persia']);
 function genCombos(nat){
-  const fams=nat.fams.map(f=>f[0]);
+  const fams=nat.fams.map(f=>f[0]).filter(k=>k!=='clerics');   // Clerics: never fielded
   const mil=fams.filter(k=>MILITARY.has(k)), milCount=mil.length;
   const spammers=fams.filter(k=>SPAM_SET.has(k));
   const hasLO=fams.includes('landowners');
-  // Statesmen is the preferred spam over Sages/Clerics when both are fieldable.
-  const spamOpts=spammers.includes('statesmen') ? spammers.filter(s=>s!=='sages'&&s!=='clerics') : spammers;
+  // Statesmen is the preferred spam over Sages when both are fieldable.
+  const spamOpts=spammers.includes('statesmen') ? spammers.filter(s=>s!=='sages') : spammers;
   const horseUU=HORSE_UU.has(nat.n) && fams.includes('riders');  // horse/elephant UU: Riders is the mil seat
-  // Riders/Hunters need a 2nd military family (for the mil seat). Champions/Statesmen never cap.
-  const capBase=k=> k!=='champions' && (k!=='statesmen' || STATESMEN_CAP.has(nat.n)) && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
+  // Riders/Hunters need a 2nd military family (for the mil seat). Champions never cap.
+  const capBase=k=> k!=='champions' && ((k==='riders'||k==='hunters') ? milCount>=2 : true);
   const hasSages=fams.includes('sages');
   const econCap=hasSages || fams.includes('patrons');   // Sages/Patrons present → preferred cap
-  // Riders/Clerics never capped over Sages/Patrons (Hunters/Traders are resource caps —
+  // Riders never capped over Sages/Patrons (Hunters/Traders are resource caps —
   // viable over Patrons with the right site); Sages just sorts ahead of Artisans (slight
   // pref); horse-UU nations reserve Riders for the mil seat (not the cap).
   const capable=k=> capBase(k)
-    && !((k==='riders'||k==='clerics') && econCap)
+    && !(k==='riders' && econCap)
     && !(k==='riders' && horseUU);
   const milPool=horseUU ? ['riders'] : (milCount>0?mil:fams), isMil=k=> milCount>0 && MILITARY.has(k);
   const out=[], seen=new Set();
@@ -185,7 +184,7 @@ function genCombos(nat){
         for(const m of milPool){
           if(m===cap || forbid.has(m) || (milCount>0 && !isMil(m))) continue;
           for(const third of fams){
-            if(third===cap || third===m || forbid.has(third) || isMil(third)) continue;
+            if(third===cap || third===m || forbid.has(third) || third==='champions') continue;
             if(milCount===0 && ORD[m]>=ORD[third]) continue;  // dedupe seat swap (no military)
             add(cap,m,third,spam);
           }
@@ -198,15 +197,16 @@ function genCombos(nat){
       }
     }
   }
-  // No-spam alternative when Landowners is the only spammer — don't force the LO spam.
-  if(spammers.length===1 && spammers[0]==='landowners'){
-    const forbid=new Set(['landowners']);
+  // No-spam combos: when the roster has no spammer at all (e.g. its only spam class
+  // was Clerics), or when Landowners is the only spammer — don't force the LO spam.
+  if(spammers.length===0 || (spammers.length===1 && spammers[0]==='landowners')){
+    const forbid=new Set(hasLO?['landowners']:[]);
     for(const cap of fams){
       if(!capable(cap) || forbid.has(cap)) continue;
       for(const m of milPool){
         if(m===cap || forbid.has(m) || (milCount>0 && !isMil(m))) continue;
         for(const third of fams){
-          if(third===cap || third===m || forbid.has(third) || isMil(third)) continue;
+          if(third===cap || third===m || forbid.has(third) || third==='champions') continue;
           if(milCount===0 && ORD[m]>=ORD[third]) continue;
           add(cap,m,third,null);   // null = no spam family
         }
@@ -261,8 +261,6 @@ const UU_SWAP={
 const EXTRA={
   Rome:[['patrons','landowners','statesmen',['landowners','statesmen'],
     'Rome’s military bonus carries the mil seat — so Landowners can sit there and still spam, splitting cities evenly with Statesmen.']],
-  Egypt:[['sages','landowners','clerics',null,
-    'Eco build — drop Riders entirely. Sage cap, Landowners as the mil seat, Clerics third; a balanced three-family comp, so grow them evenly with no single spam.']],
   Hittite:[['patrons','landowners','traders','landowners',
     'Eco build — drop Riders entirely. Patron cap, Traders third, and Landowners doubles as the mil seat and your spam — grow it widest.']],
 };
@@ -281,7 +279,7 @@ function card(nat, fam){
     ${body}${swap}</article>`;
 }
 
-const FAMS=['sages','artisans','landowners','patrons','riders','hunters','traders','clerics','statesmen','champions'];
+const FAMS=['sages','artisans','landowners','patrons','riders','hunters','traders','statesmen','champions'];
 let activeFam=null;
 const famEl=document.getElementById('famfilter');
 const hasFam=(n,fam)=>{ let c=genCombos(n); if(fam) c=c.filter(x=>x[0]===fam||x[1]===fam||x[2]===fam); return c.length>0; };
