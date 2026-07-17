@@ -83,10 +83,6 @@
   .resnote .resicons{display:inline-flex; gap:3px}
   .resnote img{width:15px; height:15px; object-fit:contain}
   .resnote .restech{color:var(--gold-dim); text-transform:none; letter-spacing:0}
-  .swapnote{margin:0 16px 15px; padding:9px 12px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap}
-  .swapnote b{color:var(--ink)}
-  .swapnote img{width:16px; height:16px; object-fit:contain; vertical-align:-3px}
-
   .note{margin:0 16px 16px; padding:11px 13px; background:var(--panel2); border-left:3px solid var(--gold-dim); border-radius:7px; font-size:13px; color:var(--muted)}
   .note b{color:var(--ink)}
 
@@ -248,13 +244,6 @@ function setupCol(nat,line){
   return `<div class="setup">${row('cap',cap)}${row('mil',mil)}${row('third',third)}${xn}${note}</div>`;
 }
 
-// horse/elephant-UU nations with a 2nd military family: Riders is the mil seat, but
-// you can swap it for the other military family once you have the UU's resource.
-const UU_SWAP={
-  Persia:{res:['horse','Horse'], alts:['Hunters']},
-  Maurya:{res:['elephant','Elephant'], alts:['Champions','Hunters']},
-};
-
 // Hand-authored combos the rule engine won't generate (it forbids a non-military
 // mil seat and only ever marks one spam). Rome's military bonus lets Landowners
 // hold the seat, freeing an even Landowners + Statesmen double-spam.
@@ -271,12 +260,10 @@ function card(nat, fam){
   if(fam) combos=combos.filter(c=> c[0]===fam || c[1]===fam || c[2]===fam);
   if(!combos.length) return '';
   const body=`<div class="setups">${combos.map(l=>setupCol(nat,l)).join('')}</div>`;
-  const sw=UU_SWAP[nat.n];
-  const swap=sw?`<div class="swapnote">swap the <b>Riders</b> mil seat for ${sw.alts.join(' / ')} if you found it on <img src="img/resources/${sw.res[0]}.png" title="${sw.res[1]}" alt="${sw.res[1]}"> ${sw.res[1]}</div>`:'';
   return `<article class="card" id="n-${nat.s}" style="--nc:${nat.nc}">
     <div class="chead"><img class="crest" src="img/crests/${nat.s}.png" alt="">
       <div><div class="nm">${nat.n}</div>${nat.dlc?`<div class="dlc">${nat.dlc}</div>`:''}</div></div>
-    ${body}${swap}</article>`;
+    ${body}</article>`;
 }
 
 const FAMS=['sages','artisans','landowners','patrons','riders','hunters','traders','statesmen','champions'];
